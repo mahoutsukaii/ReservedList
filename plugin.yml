@@ -1,0 +1,9 @@
+author: mahoutsukaii
+database: false
+description: allow players on the reserve list to join if the server is full
+generator: http://dinnerbone.com/minecraft/tools/pluginator/
+main: jadon.mahoutsukaii.plugins.reservedlist.ReservedList
+name: ReservedList
+startup: postworld
+url: http://jadon-mc.net/
+version: '1.0'

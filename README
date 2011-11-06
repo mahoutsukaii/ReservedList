@@ -1,0 +1,7 @@
+Summary:
+
+This plugin allows servers to have exclusive slots for VIPs. When the regular slots are full, VIPs will still be able to connect (with a cap, of course).
+
+Setting up:
+
+Running the plugin for the first time will generate a config file. Modify the values and add VIP player. The maxPlayers does not include VIP slots, so when creating your server.properties file, add the MaxPlayers and vipSlots together.

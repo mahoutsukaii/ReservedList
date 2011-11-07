@@ -16,15 +16,6 @@ public class ReservedListPlayerListener extends PlayerListener {
 
 
 
-	public void onPlayerQuit(PlayerQuitEvent event) {
-
-		if(plugin.getActualMax() > ReservedList.maxSlots)
-		{
-			plugin.takeAwaySpot();
-		}
-	}
-
-
 
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		
@@ -38,7 +29,7 @@ public class ReservedListPlayerListener extends PlayerListener {
 			{
 				if(plugin.getRemainingVIPSlots() > 0)
 				{
-					plugin.addNewSpot();
+					return;
 				}
 				else
 					event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "This server is full!");

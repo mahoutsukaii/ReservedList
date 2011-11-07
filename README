@@ -1,7 +1,23 @@
 Summary:
 
-This plugin allows servers to have exclusive slots for VIPs. When the regular slots are full, VIPs will still be able to connect (with a cap, of course).
+All this plugin does is give the ability for certain people to log on to your server, even if the server is full. This can be useful for admins or moderators, or even servers with donor statuses. The maximum capacity in the server list will appear to increase when VIPs join, yet a 'regular' player will not be able to join until the amount drops below the pre-configured size.
 
 Setting up:
 
-Running the plugin for the first time will generate a config file. Modify the values and add VIP player. The maxPlayers does not include VIP slots, so when creating your server.properties file, add the MaxPlayers and vipSlots together.
+To set up this plugin, all you need to do is download the .jar to the plugins folder, and run the server to generate the config.yml file. Inside this config file, you can edit the maximum amount of slots for your regular players to join, and also edit the number of reserve slots if the regular slots are full. Note: the maxSlots does NOT include the vipSlots!
+
+so what do I do with my server.properties ?
+
+As this plugin decides whether the server is full or not, it is important to alter the server.properties file to cater for it. You need to set the maximum amount of players to the sum of the maxSlots and vipSlots found in the config.yml file. i.e, if you have 40 regular slots, and 10 vip slots, you will need to set the value inside server.properties to 50.
+
+will other players be kicked when a VIP joins?
+
+No, they will not. The VIP will take a reserve slot instead. If the server is full, and there are VIP players online, the VIPs will NOT be moved to the reserve slots if a regular player tries to join.
+
+Adding players to the reserve list:
+
+To add players to the reserve list, you can either edit the config.yml file directly, or you can input the command, /addvip [player]
+
+The permission node to do this is reservedlist.addvip
+
+NOTE: if you are editing the config file directly, you will need to restart the server when you are finished.

@@ -6,17 +6,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
+
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 
 @SuppressWarnings("deprecation")
 public class ReservedList extends JavaPlugin{
 
+	Plugin permissionsEx; 
+	
 	private final ReservedListPlayerListener reservedListPlayerListener = new ReservedListPlayerListener(this);
 	private final ReservedListServerListener reservedListServerListener = new ReservedListServerListener(this);
 
@@ -41,7 +49,12 @@ public class ReservedList extends JavaPlugin{
 		
 		vips = properties.getStringList("vips", null);
 		
-		System.out.print(vips);
+		for(int i=0,l=vips.size();i<l;++i)
+		{
+		  vips.add(vips.remove(0).toLowerCase());
+		} 
+		
+		 // System.out.print(vips);
 
 	}
 
@@ -49,6 +62,8 @@ public class ReservedList extends JavaPlugin{
 		
 		new File(maindir).mkdir();
 		createDefaultConfiguration("config.yml");
+		
+		permissionsEx = getServer().getPluginManager().getPlugin("PermissionsEx");
 		
 		//register events
 		
@@ -63,27 +78,71 @@ public class ReservedList extends JavaPlugin{
 		properties.load();
 		getData();
 		this.actualMaxSlots = maxSlots;
-		System.out.print(this + " is now enabled!");
+	//	System.out.print(this + " is now enabled!");
 		
 		
+	}
+	
+	
+	
 
+	public boolean onCommand(CommandSender sender, Command command,
+			String label, String[] args) {
 		
+		if(command.getName().toLowerCase().equals("addvip"))
+		{
+			return addVIP(sender, args);
+		}
+		return false;
+	}
+
+	public boolean addVIP(CommandSender sender, String[] args)
+	{
+		
+		if(args.length < 1)
+		return false;
+		
+		
+		String playerName = args[0];
+		boolean auth;
+		auth = false;
+		if(sender instanceof Player)
+		{
+			if(sender.hasPermission("reservedlist.addvip"))
+			{
+				auth=true;
+			}
+		    if(permissionsEx!=null)
+		           if( ((PermissionsEx) permissionsEx).getPermissionManager().has((Player)sender, "reservedlist.addvip")) auth=true;
+
+		}
+		else auth=true;
+		if(!auth)
+			return false;
+		
+		if(!vips.contains(playerName.toLowerCase()))
+		{
+			vips.add(playerName.toLowerCase());
+			properties.load();
+			properties.setProperty("vips", vips);
+			properties.save();
+			
+			sender.sendMessage(ChatColor.GREEN + playerName + " was added to the VIP list.");
+			return true;
+		}
+		sender.sendMessage(ChatColor.GREEN + playerName + " is already on the list!");
+		return true;
 	}
 	
 	public int getActualMax()
 	{
+		if(getRemainingSlots() >= 0)
 		return actualMaxSlots;
+		else
+			return getServer().getOnlinePlayers().length;
 	}
 	
-	public void addNewSpot()
-	{
-		actualMaxSlots++;
-	}
-	
-	public void takeAwaySpot()
-	{
-		actualMaxSlots--;
-	}
+
 	public int getRemainingSlots()
 	{
 		return	maxSlots - getServer().getOnlinePlayers().length;
@@ -92,10 +151,15 @@ public class ReservedList extends JavaPlugin{
 	public int getRemainingVIPSlots()
 	{
 		return maxSlots + vipSlots - getServer().getOnlinePlayers().length;
+		
 	}
 	
 	public boolean isPlayerVIP(Player player)
 	{
+		if(player.hasPermission("reservedlist.vip"))
+		{
+			return true;
+		}
 		if(vips.contains(player.getName().toLowerCase()))
 			return true;
 		else
